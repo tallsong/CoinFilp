@@ -23,7 +23,19 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menustart">
+    <property name="title">
+     <string>start</string>
+    </property>
+    <addaction name="actionquit"/>
+   </widget>
+   <addaction name="menustart"/>
   </widget>
+  <action name="actionquit">
+   <property name="text">
+    <string>quit</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
