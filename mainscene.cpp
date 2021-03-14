@@ -22,6 +22,12 @@ MainScene::MainScene(QWidget *parent)
     MyPushButton * startButton {new MyPushButton(":/img/MenuSceneStartButton.png")};
     startButton->move(this->width()*0.5-startButton->width()*0.5,this->height()*0.7);
     startButton->setParent(this);
+    connect(startButton,&QPushButton::clicked,[=](){
+        startButton->moveUp();
+        startButton->moveDown();
+
+
+    });
 }
 
 void MainScene::paintEvent(QPaintEvent *)

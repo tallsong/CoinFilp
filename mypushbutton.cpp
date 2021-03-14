@@ -1,5 +1,6 @@
 #include "mypushbutton.h"
 #include<QDebug>
+#include<QPropertyAnimation>
 //MyPushButton::MyPushButton(QWidget *parent) : QWidget(parent)
 //{
 //
@@ -20,9 +21,7 @@ MyPushButton::MyPushButton(QString normalImagePath,QString pressImagePath)
     }
     else
     {
-        qDebug()<<QString{"right path : %1"}.arg(this->getNormalImagePath());
         this->setFixedSize(QSize{pix.width(),pix.height()});
-        qDebug()<<"with:"<<pix.width();
         this->setStyleSheet("QPushButton{border:0px;}");
         this->setIcon(QIcon{pix});
         this->setIconSize(QSize{pix.width(),pix.height()});
@@ -31,3 +30,23 @@ MyPushButton::MyPushButton(QString normalImagePath,QString pressImagePath)
     }
 
 }
+void MyPushButton::moveUp()
+{
+    QPropertyAnimation *animation = new QPropertyAnimation(this, "geometry");
+    animation->setDuration(200);
+    animation->setStartValue(QRect(this->x(), this->y(), this->width(), this->height()));
+    animation->setEndValue(QRect(this->x(), this->y()+10, this->width(), this->height()));
+    animation->setEasingCurve(QEasingCurve::OutBounce);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void MyPushButton::moveDown()
+{
+    QPropertyAnimation *animation = new QPropertyAnimation(this, "geometry");
+    animation->setDuration(200);
+    animation->setStartValue(QRect(this->x(), this->y()+10,this->width(), this->height()));
+    animation->setEndValue(QRect(this->x(), this->y(), this->width(), this->height()));
+    animation->setEasingCurve(QEasingCurve::OutBounce);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+}
+

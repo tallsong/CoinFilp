@@ -17,6 +17,8 @@ public:
     {
         return this->m_pressImagePath;
     }
+    void moveUp();
+    void moveDown();
 private:
     QString m_normalImagePath;
     QString m_pressImagePath;
