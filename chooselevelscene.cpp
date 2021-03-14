@@ -1,11 +1,13 @@
 #include "chooselevelscene.h"
 #include"mypushbutton.h"
+#include"playscene.h"
 #include<QPainter>
 #include<QMenu>
 #include<QMenuBar>
 #include<QAction>
 #include<QDebug>
 #include<QLabel>
+#include<QTimer>
 ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
 {
     QMenuBar* menBar{menuBar()};
@@ -21,7 +23,9 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
     backButton->setParent(this);
     backButton->move(this->width()-backButton->width(),this->height()-backButton->height());
     connect(backButton,&QPushButton::clicked,[=](){
-        emit this->chooseSecneBack();
+        QTimer::singleShot(500,this,[=](){
+            emit this->chooseSceneBack();
+        });
     });
 
 
@@ -32,7 +36,17 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
         menuButton->setParent(this);
         menuButton->move(25+(i%4)*70,130+(i/4)*70);
         connect(menuButton,&QPushButton::clicked,[=](){
-            qDebug()<<"you select level "<<i+1;
+            //qDebug()<<"you select level "<<i+1;
+            this->m_playScene = new PlayScene{i+1};
+            this->hide();
+            this->m_playScene->show();
+
+            connect(this->m_playScene,&PlayScene::chooseSecneBack,[=](){
+                delete this->m_playScene;
+                this->m_playScene=nullptr;
+                this->show();
+
+            });
         });
         QLabel * label{new QLabel(this)};
         label->setFixedSize(menuButton->width(),menuButton->height());

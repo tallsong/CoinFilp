@@ -22,7 +22,7 @@ MainScene::MainScene(QWidget *parent)
     });
 
     ChooseLevelScene *chooseLevelScene  {new ChooseLevelScene};
-    connect(chooseLevelScene,&ChooseLevelScene::chooseSecneBack,[=](){
+    connect(chooseLevelScene,&ChooseLevelScene::chooseSceneBack,[=](){
         QTimer::singleShot(500,this,[=](){
             chooseLevelScene->hide();
             this->show();
