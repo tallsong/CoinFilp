@@ -4,6 +4,8 @@
 #include<QMenu>
 #include<QMenuBar>
 #include<QAction>
+#include<QDebug>
+#include<QLabel>
 ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
 {
     QMenuBar* menBar{menuBar()};
@@ -21,6 +23,27 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
     connect(backButton,&QPushButton::clicked,[=](){
         emit this->chooseSecneBack();
     });
+
+
+    //25，130，70
+    for(int i{0};i<20;i++)
+    {
+        MyPushButton* menuButton{new MyPushButton(":/img/LevelIcon.png")};
+        menuButton->setParent(this);
+        menuButton->move(25+(i%4)*70,130+(i/4)*70);
+        connect(menuButton,&QPushButton::clicked,[=](){
+            qDebug()<<"you select level "<<i+1;
+        });
+        QLabel * label{new QLabel(this)};
+        label->setFixedSize(menuButton->width(),menuButton->height());
+        label->move(25+(i%4)*70,130+(i/4)*70);
+        label->setText(QString::number(i+1));
+        label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        label->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+
+
+    }
 }
 
 
