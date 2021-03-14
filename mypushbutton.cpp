@@ -50,3 +50,41 @@ void MyPushButton::moveDown()
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
+
+
+void MyPushButton::mousePressEvent(QMouseEvent *e)
+{
+    if(getPressImagePath() != "") //选中路径不为空，显示选中图片
+    {
+        QPixmap pixmap;
+        bool ret = pixmap.load(getPressImagePath());
+        if(!ret)
+        {
+            qDebug() << getPressImagePath() << "加载图片失败!";
+        }
+
+        this->setFixedSize( pixmap.width(), pixmap.height() );
+        this->setStyleSheet("QPushButton{border:0px;}");
+        this->setIcon(pixmap);
+        this->setIconSize(QSize(pixmap.width(),pixmap.height()));
+    }
+    //交给父类执行按下事件
+    return QPushButton::mousePressEvent(e);
+}
+void MyPushButton::mouseReleaseEvent(QMouseEvent *e)
+{
+    if(getNormalImagePath() != "") //选中路径不为空，显示选中图片
+    {
+        QPixmap pixmap;
+        bool ret = pixmap.load(getNormalImagePath());
+        if(!ret)
+        {
+            qDebug() << getNormalImagePath() << "加载图片失败!";
+        }
+        this->setFixedSize( pixmap.width(), pixmap.height() );
+        this->setStyleSheet("QPushButton{border:0px;}");
+        this->setIcon(pixmap);
+        this->setIconSize(QSize(pixmap.width(),pixmap.height()));
+    }
+    return QPushButton::mouseReleaseEvent(e);
+}

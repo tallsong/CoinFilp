@@ -7,6 +7,7 @@
 #include<QPaintEvent>
 #include<QPainter>
 #include<QDebug>
+#include<QTimer>
 MainScene::MainScene(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainScene)
@@ -21,6 +22,12 @@ MainScene::MainScene(QWidget *parent)
     });
 
     ChooseLevelScene *chooseLevelScene  {new ChooseLevelScene};
+    connect(chooseLevelScene,&ChooseLevelScene::chooseSecneBack,[=](){
+        QTimer::singleShot(500,this,[=](){
+            chooseLevelScene->hide();
+            this->show();
+        });
+    });
     MyPushButton * startButton {new MyPushButton(":/img/MenuSceneStartButton.png")};
     startButton->move(this->width()*0.5-startButton->width()*0.5,this->height()*0.7);
     startButton->setParent(this);

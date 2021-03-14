@@ -1,4 +1,5 @@
 #include "chooselevelscene.h"
+#include"mypushbutton.h"
 #include<QPainter>
 #include<QMenu>
 #include<QMenuBar>
@@ -13,6 +14,12 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
     this->setWindowIcon(QIcon{":/img/Coin0001.png"});
     connect(quitAction,&QAction::triggered,[=](){
         this->close();
+    });
+    MyPushButton * backButton {new MyPushButton(":/img/BackButton.png",":/img/BackButtonSelected")};
+    backButton->setParent(this);
+    backButton->move(this->width()-backButton->width(),this->height()-backButton->height());
+    connect(backButton,&QPushButton::clicked,[=](){
+        emit this->chooseSecneBack();
     });
 }
 

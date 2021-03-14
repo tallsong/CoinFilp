@@ -19,6 +19,8 @@ public:
     }
     void moveUp();
     void moveDown();
+    void mousePressEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 private:
     QString m_normalImagePath;
     QString m_pressImagePath;

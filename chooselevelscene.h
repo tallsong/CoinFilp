@@ -11,7 +11,7 @@ public:
     void paintEvent(QPaintEvent *);
 
 signals:
-
+    void chooseSecneBack();
 };
 
 #endif // CHOOSELEVELSCENE_H
