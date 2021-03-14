@@ -1,6 +1,8 @@
 #include "mainscene.h"
 #include "ui_mainscene.h"
 #include "mypushbutton.h"
+#include"chooselevelscene.h"
+#include<QTimer>
 #include<QPixmap>
 #include<QPaintEvent>
 #include<QPainter>
@@ -18,15 +20,17 @@ MainScene::MainScene(QWidget *parent)
         this->close();
     });
 
-
+    ChooseLevelScene *chooseLevelScene  {new ChooseLevelScene};
     MyPushButton * startButton {new MyPushButton(":/img/MenuSceneStartButton.png")};
     startButton->move(this->width()*0.5-startButton->width()*0.5,this->height()*0.7);
     startButton->setParent(this);
     connect(startButton,&QPushButton::clicked,[=](){
         startButton->moveUp();
         startButton->moveDown();
-
-
+        QTimer::singleShot(500,this,[=](){
+            this->hide();
+            chooseLevelScene->show();
+        });
     });
 }
 
