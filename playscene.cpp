@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QTimer>
 #include <QLabel>
+#include <QPixmap>
 //PlayScene::PlayScene(QWidget *parent) : QMainWindow(parent)
 //{
 //
@@ -58,6 +59,20 @@ PlayScene::PlayScene(int playLevel)
 
       //设置位置和大小
       label->setGeometry(QRect(30,this->height() - 50, 120,50 ));
+
+      for(int i{0};i<4;++i)
+      {
+          for(int j{0};j<4;++j)
+          {
+              QLabel* playLabel = new QLabel;
+              QPixmap pix;
+              pix.load(":/img/BoardNode.png");
+              playLabel->setGeometry(0,0,pix.width(),pix.height());
+              playLabel->setPixmap(pix);
+              playLabel->setParent(this);
+              playLabel->move(57+i*pix.width(),200+j*pix.height());
+          }
+      }
 
 }
 
