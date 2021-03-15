@@ -1,5 +1,6 @@
 #include "playscene.h"
 #include "mypushbutton.h"
+#include "mycoin.h"
 #include <QDebug>
 #include <QMenuBar>
 #include <QMenu>
@@ -71,6 +72,10 @@ PlayScene::PlayScene(int playLevel)
               playLabel->setPixmap(pix);
               playLabel->setParent(this);
               playLabel->move(57+i*pix.width(),200+j*pix.height());
+              MyCoin * coin =new MyCoin(":/img/Coin0001.png");
+              coin->setParent(this);
+              coin->move(59+i*pix.width(),204+j*pix.height());
+
           }
       }
 

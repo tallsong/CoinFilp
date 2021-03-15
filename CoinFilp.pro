@@ -13,13 +13,15 @@ SOURCES += \
     main.cpp \
     mainscene.cpp \
     mypushbutton.cpp \
-    playscene.cpp
+    playscene.cpp \
+    mycoin.cpp
 
 HEADERS += \
     chooselevelscene.h \
     mainscene.h \
     mypushbutton.h \
-    playscene.h
+    playscene.h \
+    mycoin.h
 
 FORMS += \
     mainscene.ui
