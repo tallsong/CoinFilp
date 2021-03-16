@@ -14,6 +14,7 @@ public:
     {
         return m_playLevel;
     }
+    int m_array[4][4];
 
 private:
     int m_playLevel;
