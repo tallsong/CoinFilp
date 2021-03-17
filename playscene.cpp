@@ -116,6 +116,21 @@ PlayScene::PlayScene(int playLevel)
                         this->m_coinList[coin->m_posX][coin->m_posY + 1]->changeFlag();
                         this->m_array[i][j + 1] = this->m_array[i][j + 1] == 1 ? 0 : 1;
                     }
+                    this->m_isWin = true;
+                    for (int i{0}; i < 4; ++i)
+                    {
+                        for (int j{0}; j < 4; ++j)
+                        {
+                            if (this->m_array[i][j] == false)
+                            {
+                                this->m_isWin = false;
+                            }
+                        }
+                    }
+                    if (this->m_isWin)
+                    {
+                        qDebug() << "win!";
+                    }
                 });
             });
         }

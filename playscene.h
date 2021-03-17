@@ -16,6 +16,7 @@ public:
     }
     int m_array[4][4];
     MyCoin *m_coinList[4][4];
+    bool m_isWin{true};
 
 private:
     int m_playLevel;
