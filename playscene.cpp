@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QLabel>
 #include <QPixmap>
+#include <QPropertyAnimation>
 //PlayScene::PlayScene(QWidget *parent) : QMainWindow(parent)
 //{
 //
@@ -61,6 +62,15 @@ PlayScene::PlayScene(int playLevel)
     label->setGeometry(QRect(30, this->height() - 50, 120, 50));
 
     dataConfig config;
+    // to create success img
+    QLabel *winLabel = new QLabel;
+    QPixmap tmpPix;
+    tmpPix.load(":/img/LevelCompletedDialogBg.png");
+    winLabel->setGeometry(0, 0, tmpPix.width(), tmpPix.height());
+    winLabel->setPixmap(tmpPix);
+    winLabel->setParent(this);
+    winLabel->move((this->width() - tmpPix.width()) * 0.5, -tmpPix.height());
+
     for (int i{0}; i < 4; ++i)
     {
         for (int j{0}; j < 4; ++j)
@@ -136,6 +146,13 @@ PlayScene::PlayScene(int playLevel)
                                 this->m_coinList[i][j]->m_isWin = true;
                             }
                         }
+                        qDebug() << "win!";
+                        QPropertyAnimation *animation1 = new QPropertyAnimation(winLabel, "geometry");
+                        animation1->setDuration(1000);
+                        animation1->setStartValue(QRect(winLabel->x(), winLabel->y(), winLabel->width(), winLabel->height()));
+                        animation1->setEndValue(QRect(winLabel->x(), winLabel->y() + 114, winLabel->width(), winLabel->height()));
+                        animation1->setEasingCurve(QEasingCurve::OutBounce);
+                        animation1->start(QAbstractAnimation::DeleteWhenStopped);
                     }
                 });
             });
