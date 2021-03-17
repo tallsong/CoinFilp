@@ -12,10 +12,7 @@ public:
     explicit dataConfig(QObject *parent = 0);
 
 public:
-
-    QMap<int, QVector< QVector<int> > >mData;
-
-
+    QMap<int, QVector<QVector<int>>> mData;
 
 signals:
 

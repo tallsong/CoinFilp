@@ -11,6 +11,7 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QPropertyAnimation>
+#include <QSound>
 //PlayScene::PlayScene(QWidget *parent) : QMainWindow(parent)
 //{
 //
@@ -39,7 +40,9 @@ PlayScene::PlayScene(int playLevel)
     MyPushButton *backButton{new MyPushButton(":/img/BackButton.png", ":/img/BackButtonSelected")};
     backButton->setParent(this);
     backButton->move(this->width() - backButton->width(), this->height() - backButton->height());
+    QSound *backSound = new QSound(":/img/BackButtonSound.wav", this);
     connect(backButton, &QPushButton::clicked, [=]() {
+        backSound->play();
         QTimer::singleShot(500, this, [=]() {
             emit this->chooseSecneBack();
         });
@@ -101,7 +104,10 @@ PlayScene::PlayScene(int playLevel)
             coin->m_posX = i;
             coin->m_posY = j;
             coin->m_flag = this->m_array[i][j];
+            QSound *flipSound = new QSound(":/img/ConFlipSound.wav", this);
+            QSound *winSound = new QSound(":/img/LevelWinSound.wav", this);
             connect(coin, &MyCoin::clicked, [=]() {
+                flipSound->play();
                 coin->changeFlag();
                 this->m_array[i][j] = this->m_array[i][j] == 1 ? 0 : 1;
                 QTimer::singleShot(30, this, [=]() {
@@ -147,6 +153,7 @@ PlayScene::PlayScene(int playLevel)
                             }
                         }
                         qDebug() << "win!";
+                        winSound->play();
                         QPropertyAnimation *animation1 = new QPropertyAnimation(winLabel, "geometry");
                         animation1->setDuration(1000);
                         animation1->setStartValue(QRect(winLabel->x(), winLabel->y(), winLabel->width(), winLabel->height()));

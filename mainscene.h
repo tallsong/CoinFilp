@@ -2,9 +2,12 @@
 #define MAINSCENE_H
 
 #include <QMainWindow>
-#include<QPaintEvent>
+#include <QPaintEvent>
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainScene; }
+namespace Ui
+{
+    class MainScene;
+}
 QT_END_NAMESPACE
 
 class MainScene : public QMainWindow

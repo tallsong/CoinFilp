@@ -8,7 +8,7 @@ class MyPushButton : public QPushButton
     Q_OBJECT
 public:
     //explicit MyPushButton(QWidget *parent = nullptr);
-    MyPushButton(QString normalImagePath,QString pressImagePath="");
+    MyPushButton(QString normalImagePath, QString pressImagePath = "");
     QString getNormalImagePath()
     {
         return this->m_normalImagePath;
@@ -21,11 +21,11 @@ public:
     void moveDown();
     void mousePressEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
+
 private:
     QString m_normalImagePath;
     QString m_pressImagePath;
 signals:
-
 };
 
 #endif // MYPUSHBUTTON_H
