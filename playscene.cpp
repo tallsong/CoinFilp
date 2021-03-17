@@ -73,7 +73,7 @@ PlayScene::PlayScene(int playLevel)
             playLabel->setParent(this);
             playLabel->move(57 + i * pix.width(), 200 + j * pix.height());
 
-            this->m_array[i][j]=config.mData[this->m_playLevel][i][j];
+            this->m_array[i][j] = config.mData[this->m_playLevel][i][j];
             QString imagePath{};
             if (this->m_array[i][j])
             {
@@ -86,6 +86,13 @@ PlayScene::PlayScene(int playLevel)
             MyCoin *coin = new MyCoin(imagePath);
             coin->setParent(this);
             coin->move(59 + i * pix.width(), 204 + j * pix.height());
+
+            coin->m_posX = i;
+            coin->m_posY = j;
+            coin->m_flag = this->m_array[i][j];
+            connect(coin, &MyCoin::clicked, [=]() {
+                coin->changeFlag();
+            });
         }
     }
 }
