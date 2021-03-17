@@ -43,6 +43,7 @@ MyCoin::MyCoin(QString imagePath)
             {
                 this->m_min = 1;
                 m_timer1->stop();
+                this->m_isAnimation=false;
             }
         });
         connect(m_timer2, &QTimer::timeout, [=]() {
@@ -64,6 +65,7 @@ MyCoin::MyCoin(QString imagePath)
             {
                 this->m_max = 8;
                 m_timer2->stop();
+                this->m_isAnimation=false;
             }
         });
         
@@ -76,13 +78,26 @@ void MyCoin::changeFlag()
 {
     if (this->m_flag)
     {
+        this->m_isAnimation=true;
         this->m_timer1->start(30);
 
         this->m_flag = false;
     }
     else
     {
+        this->m_isAnimation=true;
         this->m_timer2->start(30);
         this->m_flag = true;
+    }
+}
+void MyCoin::mousePressEvent(QMouseEvent *e)
+{
+    if(this->m_isAnimation)
+    {
+        return;
+    }
+    else
+    {
+        QPushButton::mousePressEvent(e);
     }
 }
