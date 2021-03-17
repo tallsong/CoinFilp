@@ -86,12 +86,37 @@ PlayScene::PlayScene(int playLevel)
             MyCoin *coin = new MyCoin(imagePath);
             coin->setParent(this);
             coin->move(59 + i * pix.width(), 204 + j * pix.height());
+            this->m_coinList[i][j] = coin;
 
             coin->m_posX = i;
             coin->m_posY = j;
             coin->m_flag = this->m_array[i][j];
             connect(coin, &MyCoin::clicked, [=]() {
                 coin->changeFlag();
+                this->m_array[i][j] = this->m_array[i][j] == 1 ? 0 : 1;
+                QTimer::singleShot(30, this, [=]() {
+                    if (coin->m_posX > 0)
+                    {
+                        this->m_coinList[coin->m_posX - 1][coin->m_posY]->changeFlag();
+                        this->m_array[i - 1][j] = this->m_array[i - 1][j] == 1 ? 0 : 1;
+                    }
+                    if (coin->m_posX < 3)
+                    {
+                        this->m_coinList[coin->m_posX + 1][coin->m_posY]->changeFlag();
+                        this->m_array[i + 1][j] = this->m_array[i + 1][j] == 1 ? 0 : 1;
+                    }
+                    if (coin->m_posY > 0)
+                    {
+                        this->m_coinList[coin->m_posX][coin->m_posY - 1]->changeFlag();
+                        this->m_array[i][j - 1] = this->m_array[i][j - 1] == 1 ? 0 : 1;
+                    }
+
+                    if (coin->m_posY < 3)
+                    {
+                        this->m_coinList[coin->m_posX][coin->m_posY + 1]->changeFlag();
+                        this->m_array[i][j + 1] = this->m_array[i][j + 1] == 1 ? 0 : 1;
+                    }
+                });
             });
         }
     }
