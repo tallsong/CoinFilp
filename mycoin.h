@@ -19,6 +19,7 @@ public:
     QTimer *m_timer2;
     void changeFlag();
     void mousePressEvent(QMouseEvent *);
+    bool m_isWin{false};
 signals:
 
 public slots:

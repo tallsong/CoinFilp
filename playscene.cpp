@@ -129,7 +129,13 @@ PlayScene::PlayScene(int playLevel)
                     }
                     if (this->m_isWin)
                     {
-                        qDebug() << "win!";
+                        for (int i{0}; i < 4; ++i)
+                        {
+                            for (int j{0}; j < 4; ++j)
+                            {
+                                this->m_coinList[i][j]->m_isWin = true;
+                            }
+                        }
                     }
                 });
             });
