@@ -43,9 +43,11 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
             //qDebug()<<"you select level "<<i+1;
             this->m_playScene = new PlayScene{i + 1};
             this->hide();
+            this->m_playScene->setGeometry(this->geometry());
             this->m_playScene->show();
 
             connect(this->m_playScene, &PlayScene::chooseSecneBack, [=]() {
+                this->setGeometry(this->m_playScene->geometry());
                 delete this->m_playScene;
                 this->m_playScene = nullptr;
                 this->show();
