@@ -91,7 +91,7 @@ void PlayScene::CreateLevelLabel() {
   font.setFamily("华文新魏");
   font.setPointSize(20);
   label->setFont(font);
-  label->setGeometry(QRect(30, height() - 50, 120, 50));
+  label->setGeometry(QRect(30, height() - 50, 160, 50));
 }
 
 void PlayScene::CreateWinBanner() {

@@ -9,8 +9,9 @@ namespace coinfilp {
 // Number of rows and columns on the board.
 inline constexpr int kBoardSize = 4;
 
-// Number of hand-authored levels.
-inline constexpr int kLevelCount = 20;
+// Number of levels. Levels 1-20 are hand-authored; the rest were generated
+// (see the comment in dataconfig.cpp).
+inline constexpr int kLevelCount = 100;
 
 // One board layout, indexed as board[column][row]. `true` means the coin
 // starts face-up (gold); `false` means face-down (silver).
