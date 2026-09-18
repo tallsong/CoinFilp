@@ -38,6 +38,10 @@ make                     # or nmake / mingw32-make on Windows
 ./CoinFilp
 ```
 
+### macOS note
+
+Qt releases before 6.5.3 try to link against Apple's `AGL` framework, which Xcode 15 and later no longer ship, producing `framework 'AGL' not found` at link time. `CoinFilp.pro` overrides the OpenGL link settings on macOS so the project links with those Qt versions. If you switch Qt versions, re-run qmake so the change is picked up.
+
 All images and sounds are compiled into the binary through `img.qrc`, so the executable has no runtime asset dependencies beyond the Qt libraries themselves.
 
 ## Project layout

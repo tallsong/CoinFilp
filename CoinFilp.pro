@@ -33,3 +33,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     img.qrc
+
+# Qt releases before 6.5.3 link every GUI app against Apple's AGL framework,
+# which no longer exists in the macOS 14+ SDK shipped with Xcode 15 and later
+# ("framework 'AGL' not found"). Keep only the OpenGL framework.
+macx {
+    QMAKE_LIBS_OPENGL = -framework OpenGL
+    QMAKE_INCDIR_OPENGL = /System/Library/Frameworks/OpenGL.framework/Headers
+}
