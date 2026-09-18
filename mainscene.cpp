@@ -1,6 +1,5 @@
 #include "mainscene.h"
 
-#include <QAction>
 #include <QIcon>
 #include <QPainter>
 #include <QPixmap>
@@ -8,6 +7,7 @@
 
 #include "chooselevelscene.h"
 #include "constants.h"
+#include "menus.h"
 #include "mypushbutton.h"
 #include "ui_mainscene.h"
 
@@ -24,13 +24,15 @@ MainScene::MainScene(QWidget* parent)
       ui_(std::make_unique<Ui::MainScene>()),
       choose_level_scene_(std::make_unique<ChooseLevelScene>()),
       background_(kBackgroundImage),
-      title_(QPixmap(kTitleImage).scaled(QPixmap(kTitleImage).size() / 2)) {
+      title_(QPixmap(kTitleImage)
+                 .scaled(QPixmap(kTitleImage).size() / 2, Qt::IgnoreAspectRatio,
+                         Qt::SmoothTransformation)) {
   ui_->setupUi(this);
   setWindowTitle("CoinFilp");
   setFixedSize(kSceneWidth, kSceneHeight);
   setWindowIcon(QIcon(kWindowIcon));
 
-  connect(ui_->actionquit, &QAction::triggered, this, &MainScene::close);
+  SetUpQuitAction(ui_->actionquit);
   connect(choose_level_scene_.get(), &ChooseLevelScene::BackRequested, this,
           &MainScene::OnChooseLevelSceneBack);
 
@@ -65,6 +67,7 @@ void MainScene::OnChooseLevelSceneBack() {
 
 void MainScene::paintEvent(QPaintEvent* /*event*/) {
   QPainter painter(this);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform);
   painter.drawPixmap(0, 0, width(), height(), background_);
   painter.drawPixmap(10, 30, title_);
 }

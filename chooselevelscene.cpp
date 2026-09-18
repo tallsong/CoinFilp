@@ -1,11 +1,8 @@
 #include "chooselevelscene.h"
 
-#include <QAction>
 #include <QFont>
 #include <QIcon>
 #include <QLabel>
-#include <QMenu>
-#include <QMenuBar>
 #include <QPainter>
 #include <QSoundEffect>
 #include <QString>
@@ -14,6 +11,7 @@
 
 #include "constants.h"
 #include "dataconfig.h"
+#include "menus.h"
 #include "mypushbutton.h"
 #include "playscene.h"
 
@@ -74,11 +72,7 @@ void ChooseLevelScene::SetPage(int page) {
   page_label_->setText(QString("%1 / %2").arg(page_ + 1).arg(count));
 }
 
-void ChooseLevelScene::CreateMenu() {
-  QMenu* start_menu = menuBar()->addMenu("start");
-  QAction* quit_action = start_menu->addAction("quit");
-  connect(quit_action, &QAction::triggered, this, &ChooseLevelScene::close);
-}
+void ChooseLevelScene::CreateMenu() { AddStartMenu(this); }
 
 void ChooseLevelScene::CreateBackButton() {
   auto* back_button =
@@ -163,6 +157,7 @@ void ChooseLevelScene::OnPlaySceneBack() {
 
 void ChooseLevelScene::paintEvent(QPaintEvent* /*event*/) {
   QPainter painter(this);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform);
   painter.drawPixmap(0, 0, width(), height(), background_);
   painter.drawPixmap((width() - title_.width()) / 2, 30, title_);
 }

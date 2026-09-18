@@ -26,6 +26,16 @@ Every button press, coin flip and win is accompanied by a sound effect, and coin
 
 Sound effects are played through `QSoundEffect`, so the Qt Multimedia module and one of its platform audio backends must be installed.
 
+### macOS
+
+On macOS the build produces a native Apple Silicon app bundle (`CoinFilp.app`). `CoinFilp.pro` sets `QMAKE_APPLE_DEVICE_ARCHS = arm64`; change it to `arm64 x86_64` for a universal binary. Release builds use `-O3` and link-time optimisation.
+
+The bundle metadata comes from `Info.plist` (bundle identifier `com.tallsong.CoinFilp`, version, puzzle-game category, Retina support) and the Dock icon from `img/CoinFilp.icns`. Quit lives in the application menu with ⌘Q. To ship the app to another Mac, bundle the Qt frameworks with:
+
+```sh
+macdeployqt build/CoinFilp.app
+```
+
 ### With Qt Creator
 
 Open `CoinFilp.pro`, pick a Qt 6 kit, and press **Run**.
@@ -55,6 +65,8 @@ All images and sounds are compiled into the binary through `img.qrc`, so the exe
 | `constants.h` | Scene size, scene-switch delay and resource paths shared by more than one scene. |
 | `qt_yield_fix.h` | Build workaround for Qt 6.10 with Xcode 26+/27 on Apple Silicon (see comment inside). |
 | `.clang-format` | Google C++ style; run `clang-format -i *.cpp *.h` after editing. |
+| `menus.h/.cpp` | Shared menu helper that gives every scene a native Quit command (application menu and ⌘Q on macOS). |
+| `Info.plist`, `img/CoinFilp.icns` | macOS bundle metadata and Dock icon (the icon is generated from `img/Coin0001.png`). |
 | `img.qrc`, `img/` | Qt resource file and the PNG/WAV assets it bundles. |
 | `docs/` | Miscellaneous Qt notes (currently an example of re-implementing focus events on a `QLineEdit`). |
 

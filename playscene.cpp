@@ -1,14 +1,11 @@
 #include "playscene.h"
 
 #include <QAbstractAnimation>
-#include <QAction>
 #include <QDebug>
 #include <QEasingCurve>
 #include <QFont>
 #include <QIcon>
 #include <QLabel>
-#include <QMenu>
-#include <QMenuBar>
 #include <QPainter>
 #include <QPixmap>
 #include <QPropertyAnimation>
@@ -18,6 +15,7 @@
 #include <QUrl>
 
 #include "constants.h"
+#include "menus.h"
 #include "mycoin.h"
 #include "mypushbutton.h"
 
@@ -48,7 +46,9 @@ PlayScene::PlayScene(int level, QWidget* parent)
     : QMainWindow(parent),
       level_(level),
       background_(kBackgroundImage),
-      title_(QPixmap(kTitleImage).scaled(QPixmap(kTitleImage).size() / 2)) {
+      title_(QPixmap(kTitleImage)
+                 .scaled(QPixmap(kTitleImage).size() / 2, Qt::IgnoreAspectRatio,
+                         Qt::SmoothTransformation)) {
   setFixedSize(kSceneWidth, kSceneHeight);
   setWindowIcon(QIcon(kWindowIcon));
   setWindowTitle("play scene");
@@ -67,11 +67,7 @@ PlayScene::PlayScene(int level, QWidget* parent)
   CreateBoard();
 }
 
-void PlayScene::CreateMenu() {
-  QMenu* start_menu = menuBar()->addMenu("start");
-  QAction* quit_action = start_menu->addAction("quit");
-  connect(quit_action, &QAction::triggered, this, &PlayScene::close);
-}
+void PlayScene::CreateMenu() { AddStartMenu(this); }
 
 void PlayScene::CreateBackButton() {
   auto* back_button =
@@ -88,7 +84,9 @@ void PlayScene::CreateBackButton() {
 void PlayScene::CreateLevelLabel() {
   auto* label = new QLabel(QString("level: %1").arg(level_), this);
   QFont font;
-  font.setFamily("华文新魏");
+  // Prefer the calligraphic font of the original game, then fall back to
+  // fonts that ship with macOS.
+  font.setFamilies({"华文新魏", "STXinwei", "PingFang SC"});
   font.setPointSize(20);
   label->setFont(font);
   label->setGeometry(QRect(30, height() - 50, 160, 50));
@@ -171,6 +169,7 @@ void PlayScene::ShowWin() {
 
 void PlayScene::paintEvent(QPaintEvent* /*event*/) {
   QPainter painter(this);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform);
   painter.drawPixmap(0, 0, width(), height(), background_);
   painter.drawPixmap(10, 30, title_);
 }
