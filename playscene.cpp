@@ -11,7 +11,9 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QPropertyAnimation>
-#include <QSound>
+#include <QSoundEffect>
+#include <QUrl>
+#include <QFont>
 //PlayScene::PlayScene(QWidget *parent) : QMainWindow(parent)
 //{
 //
@@ -40,7 +42,12 @@ PlayScene::PlayScene(int playLevel)
     MyPushButton *backButton{new MyPushButton(":/img/BackButton.png", ":/img/BackButtonSelected")};
     backButton->setParent(this);
     backButton->move(this->width() - backButton->width(), this->height() - backButton->height());
-    QSound *backSound = new QSound(":/img/BackButtonSound.wav", this);
+    QSoundEffect *backSound = new QSoundEffect(this);
+    backSound->setSource(QUrl("qrc:/img/BackButtonSound.wav"));
+    QSoundEffect *flipSound = new QSoundEffect(this);
+    flipSound->setSource(QUrl("qrc:/img/ConFlipSound.wav"));
+    QSoundEffect *winSound = new QSoundEffect(this);
+    winSound->setSource(QUrl("qrc:/img/LevelWinSound.wav"));
     connect(backButton, &QPushButton::clicked, [=]() {
         backSound->play();
         QTimer::singleShot(500, this, [=]() {
@@ -104,8 +111,6 @@ PlayScene::PlayScene(int playLevel)
             coin->m_posX = i;
             coin->m_posY = j;
             coin->m_flag = this->m_array[i][j];
-            QSound *flipSound = new QSound(":/img/ConFlipSound.wav", this);
-            QSound *winSound = new QSound(":/img/LevelWinSound.wav", this);
             connect(coin, &MyCoin::clicked, [=]() {
                 flipSound->play();
                 coin->changeFlag();

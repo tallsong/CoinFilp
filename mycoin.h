@@ -2,6 +2,10 @@
 #define MYCOIN_H
 
 #include <QPushButton>
+#include <QString>
+
+class QTimer;
+class QMouseEvent;
 
 class MyCoin : public QPushButton
 {

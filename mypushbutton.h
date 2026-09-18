@@ -2,6 +2,9 @@
 #define MYPUSHBUTTON_H
 
 #include <QPushButton>
+#include <QString>
+
+class QMouseEvent;
 
 class MyPushButton : public QPushButton
 {

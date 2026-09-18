@@ -1,6 +1,6 @@
 #ifndef CHOOSELEVELSCENE_H
 #define CHOOSELEVELSCENE_H
-#include <playscene.h>
+#include "playscene.h"
 #include <QMainWindow>
 
 class ChooseLevelScene : public QMainWindow

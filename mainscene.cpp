@@ -2,8 +2,8 @@
 #include "ui_mainscene.h"
 #include "mypushbutton.h"
 #include "chooselevelscene.h"
-#include <QTimer>
 #include <QPixmap>
+#include <QIcon>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QDebug>
