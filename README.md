@@ -19,22 +19,22 @@ Every button press, coin flip and win is accompanied by a sound effect, and coin
 
 ### Requirements
 
-- Qt 5 (tested with the `core`, `gui`, `widgets` and `multimedia` modules)
-- A C++11-capable compiler
-- `qmake` (or Qt Creator)
+- Qt 6 (tested with 6.4) with the `core`, `gui`, `widgets` and `multimedia` modules
+- A C++17-capable compiler
+- `qmake6` (or Qt Creator)
 
-The project uses `QSound` from `QtMultimedia`, which was removed in Qt 6. Build against Qt 5, or replace `QSound` with `QSoundEffect` if you want to target Qt 6.
+Sound effects are played through `QSoundEffect`, so the Qt Multimedia module and one of its platform audio backends must be installed.
 
 ### With Qt Creator
 
-Open `CoinFilp.pro`, pick a Qt 5 kit, and press **Run**.
+Open `CoinFilp.pro`, pick a Qt 6 kit, and press **Run**.
 
 ### From the command line
 
 ```sh
 mkdir build && cd build
-qmake ../CoinFilp.pro
-make            # or nmake / mingw32-make on Windows
+qmake6 ../CoinFilp.pro   # plain `qmake` also works if it points at a Qt 6 install
+make                     # or nmake / mingw32-make on Windows
 ./CoinFilp
 ```
 

@@ -8,11 +8,15 @@
 #include <QDebug>
 #include <QLabel>
 #include <QTimer>
-#include <QSound>
+#include <QSoundEffect>
+#include <QUrl>
+#include <QPixmap>
 ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
 {
-    QSound *backSound = new QSound(":/img/BackButtonSound.wav", this);
-    QSound *chooseSound = new QSound(":/img/TapButtonSound.wav", this);
+    QSoundEffect *backSound = new QSoundEffect(this);
+    backSound->setSource(QUrl("qrc:/img/BackButtonSound.wav"));
+    QSoundEffect *chooseSound = new QSoundEffect(this);
+    chooseSound->setSource(QUrl("qrc:/img/TapButtonSound.wav"));
     QMenuBar *menBar{menuBar()};
     QMenu *startMenu = menBar->addMenu("start");
     QAction *quitAction = startMenu->addAction("quit");

@@ -1,6 +1,9 @@
 #include "mycoin.h"
 #include <QDebug>
 #include <QTimer>
+#include <QPixmap>
+#include <QIcon>
+#include <QMouseEvent>
 //MyCoin::MyCoin(QWidget *parent) : QWidget(parent)
 //{
 

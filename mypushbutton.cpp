@@ -1,6 +1,9 @@
 #include "mypushbutton.h"
 #include <QDebug>
 #include <QPropertyAnimation>
+#include <QPixmap>
+#include <QIcon>
+#include <QMouseEvent>
 //MyPushButton::MyPushButton(QWidget *parent) : QWidget(parent)
 //{
 //
