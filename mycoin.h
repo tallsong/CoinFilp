@@ -1,32 +1,46 @@
-#ifndef MYCOIN_H
-#define MYCOIN_H
+// A single coin on the game board.
+#ifndef COINFILP_MYCOIN_H_
+#define COINFILP_MYCOIN_H_
 
 #include <QPushButton>
-#include <QString>
 
-class QTimer;
 class QMouseEvent;
+class QTimer;
 
-class MyCoin : public QPushButton
-{
-    Q_OBJECT
-public:
-    //explicit MyCoin(QWidget *parent = 0);
-    MyCoin(QString imagePath);
-    int m_posX;
-    int m_posY;
-    bool m_flag;
-    int m_min{1};
-    int m_max{8};
-    bool m_isAnimation{false};
-    QTimer *m_timer1;
-    QTimer *m_timer2;
-    void changeFlag();
-    void mousePressEvent(QMouseEvent *);
-    bool m_isWin{false};
-signals:
+namespace coinfilp {
 
-public slots:
+class MyCoin : public QPushButton {
+  Q_OBJECT
+
+ public:
+  explicit MyCoin(bool face_up, QWidget* parent = nullptr);
+
+  // Whether the coin currently shows (or is flipping to) its gold side.
+  bool face_up() const { return face_up_; }
+
+  // A locked coin ignores mouse presses. Used once a level has been solved.
+  void set_locked(bool locked) { locked_ = locked; }
+
+  // Turns the coin over, playing the eight-frame flip animation.
+  void Flip();
+
+ protected:
+  void mousePressEvent(QMouseEvent* event) override;
+
+ private:
+  // Displays animation frame `frame`, in [kFirstFrame, kLastFrame].
+  void ShowFrame(int frame);
+
+  // Timer callback: shows the next frame and stops after the last one.
+  void AdvanceAnimation();
+
+  bool face_up_;
+  bool locked_ = false;
+  int frame_ = 0;
+  int frame_step_ = 0;
+  QTimer* animation_timer_;  // Owned by this widget through Qt parenting.
 };
 
-#endif // MYCOIN_H
+}  // namespace coinfilp
+
+#endif  // COINFILP_MYCOIN_H_

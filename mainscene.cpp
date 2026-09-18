@@ -1,58 +1,72 @@
 #include "mainscene.h"
-#include "ui_mainscene.h"
-#include "mypushbutton.h"
-#include "chooselevelscene.h"
-#include <QPixmap>
+
+#include <QAction>
 #include <QIcon>
-#include <QPaintEvent>
 #include <QPainter>
-#include <QDebug>
+#include <QPixmap>
 #include <QTimer>
-MainScene::MainScene(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainScene)
-{
-    ui->setupUi(this);
-    this->setWindowTitle("CoinFilp");
-    this->setFixedSize(320, 588);
-    this->setWindowIcon(QIcon{":/img/Coin0001.png"});
-    //this->setWindowIcon(QPixmap{":/img/Coin0001.png"});
-    connect(ui->actionquit, &QAction::triggered, [=]() {
-        this->close();
-    });
 
-    ChooseLevelScene *chooseLevelScene{new ChooseLevelScene};
-    connect(chooseLevelScene, &ChooseLevelScene::chooseSceneBack, [=]() {
-        QTimer::singleShot(500, this, [=]() {
-            chooseLevelScene->hide();
-            this->setGeometry(chooseLevelScene->geometry());
-            this->show();
-        });
-    });
-    MyPushButton *startButton{new MyPushButton(":/img/MenuSceneStartButton.png")};
-    startButton->move(this->width() * 0.5 - startButton->width() * 0.5, this->height() * 0.7);
-    startButton->setParent(this);
-    connect(startButton, &QPushButton::clicked, [=]() {
-        startButton->moveUp();
-        startButton->moveDown();
-        QTimer::singleShot(500, this, [=]() {
-            this->hide();
-            chooseLevelScene->setGeometry(this->geometry());
-            chooseLevelScene->show();
-        });
-    });
+#include "chooselevelscene.h"
+#include "constants.h"
+#include "mypushbutton.h"
+#include "ui_mainscene.h"
+
+namespace coinfilp {
+namespace {
+
+constexpr char kBackgroundImage[] = ":/img/PlayLevelSceneBg.png";
+constexpr char kStartButtonImage[] = ":/img/MenuSceneStartButton.png";
+
+}  // namespace
+
+MainScene::MainScene(QWidget* parent)
+    : QMainWindow(parent),
+      ui_(std::make_unique<Ui::MainScene>()),
+      choose_level_scene_(std::make_unique<ChooseLevelScene>()),
+      background_(kBackgroundImage),
+      title_(QPixmap(kTitleImage).scaled(QPixmap(kTitleImage).size() / 2)) {
+  ui_->setupUi(this);
+  setWindowTitle("CoinFilp");
+  setFixedSize(kSceneWidth, kSceneHeight);
+  setWindowIcon(QIcon(kWindowIcon));
+
+  connect(ui_->actionquit, &QAction::triggered, this, &MainScene::close);
+  connect(choose_level_scene_.get(), &ChooseLevelScene::BackRequested, this,
+          &MainScene::OnChooseLevelSceneBack);
+
+  CreateStartButton();
 }
 
-void MainScene::paintEvent(QPaintEvent *)
-{
-    QPainter painter(this);
-    QPixmap map;
-    map.load(":/img/PlayLevelSceneBg.png");
-    painter.drawPixmap(0, 0, this->width(), this->height(), map);
-    map.load(":/img/Title.png");
-    map = map.scaled(map.width() * 0.5, map.height() * 0.5);
-    painter.drawPixmap(10, 30, map.width(), map.height(), map);
+MainScene::~MainScene() = default;
+
+void MainScene::CreateStartButton() {
+  auto* start_button = new MyPushButton(kStartButtonImage, QString(), this);
+  start_button->move((width() - start_button->width()) / 2, height() * 7 / 10);
+  connect(start_button, &QPushButton::clicked, this, [this, start_button] {
+    start_button->Bounce();
+    QTimer::singleShot(kSceneSwitchDelayMs, this,
+                       &MainScene::ShowChooseLevelScene);
+  });
 }
-MainScene::~MainScene()
-{
-    delete ui;
+
+void MainScene::ShowChooseLevelScene() {
+  hide();
+  choose_level_scene_->setGeometry(geometry());
+  choose_level_scene_->show();
 }
+
+void MainScene::OnChooseLevelSceneBack() {
+  QTimer::singleShot(kSceneSwitchDelayMs, this, [this] {
+    choose_level_scene_->hide();
+    setGeometry(choose_level_scene_->geometry());
+    show();
+  });
+}
+
+void MainScene::paintEvent(QPaintEvent* /*event*/) {
+  QPainter painter(this);
+  painter.drawPixmap(0, 0, width(), height(), background_);
+  painter.drawPixmap(10, 30, title_);
+}
+
+}  // namespace coinfilp

@@ -1,85 +1,77 @@
 #include "mypushbutton.h"
+
+#include <QAbstractAnimation>
 #include <QDebug>
-#include <QPropertyAnimation>
-#include <QPixmap>
+#include <QEasingCurve>
 #include <QIcon>
 #include <QMouseEvent>
-//MyPushButton::MyPushButton(QWidget *parent) : QWidget(parent)
-//{
-//
-//}
+#include <QPixmap>
+#include <QPropertyAnimation>
+#include <QRect>
+#include <QSequentialAnimationGroup>
 
-MyPushButton::MyPushButton(QString normalImagePath, QString pressImagePath)
-    : m_normalImagePath{normalImagePath}, m_pressImagePath{pressImagePath}
-{
-    QPixmap pix;
-    bool ret{pix.load(this->getNormalImagePath())};
-    if (!ret)
-    {
-        qDebug() << QString{"wrong path : %1"}.arg(this->getNormalImagePath());
-        return;
-    }
-    else
-    {
-        this->setFixedSize(QSize{pix.width(), pix.height()});
-        this->setStyleSheet("QPushButton{border:0px;}");
-        this->setIcon(QIcon{pix});
-        this->setIconSize(QSize{pix.width(), pix.height()});
-    }
-}
-void MyPushButton::moveUp()
-{
-    QPropertyAnimation *animation = new QPropertyAnimation(this, "geometry");
-    animation->setDuration(200);
-    animation->setStartValue(QRect(this->x(), this->y(), this->width(), this->height()));
-    animation->setEndValue(QRect(this->x(), this->y() + 10, this->width(), this->height()));
-    animation->setEasingCurve(QEasingCurve::OutBounce);
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
+namespace coinfilp {
+namespace {
+
+constexpr int kBounceDistance = 10;
+constexpr int kBounceHalfDurationMs = 200;
+
+}  // namespace
+
+MyPushButton::MyPushButton(const QString& normal_image_path,
+                           const QString& pressed_image_path, QWidget* parent)
+    : QPushButton(parent),
+      normal_image_path_(normal_image_path),
+      pressed_image_path_(pressed_image_path) {
+  setStyleSheet("QPushButton{border:0px;}");
+  SetImage(normal_image_path_);
 }
 
-void MyPushButton::moveDown()
-{
-    QPropertyAnimation *animation = new QPropertyAnimation(this, "geometry");
-    animation->setDuration(200);
-    animation->setStartValue(QRect(this->x(), this->y() + 10, this->width(), this->height()));
-    animation->setEndValue(QRect(this->x(), this->y(), this->width(), this->height()));
-    animation->setEasingCurve(QEasingCurve::OutBounce);
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
+void MyPushButton::Bounce() {
+  const QRect origin = geometry();
+  const QRect lowered = origin.translated(0, kBounceDistance);
+
+  auto* down = new QPropertyAnimation(this, "geometry");
+  down->setDuration(kBounceHalfDurationMs);
+  down->setStartValue(origin);
+  down->setEndValue(lowered);
+  down->setEasingCurve(QEasingCurve::OutBounce);
+
+  auto* up = new QPropertyAnimation(this, "geometry");
+  up->setDuration(kBounceHalfDurationMs);
+  up->setStartValue(lowered);
+  up->setEndValue(origin);
+  up->setEasingCurve(QEasingCurve::OutBounce);
+
+  auto* group = new QSequentialAnimationGroup(this);
+  group->addAnimation(down);
+  group->addAnimation(up);
+  group->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void MyPushButton::mousePressEvent(QMouseEvent *e)
-{
-    if (getPressImagePath() != "") //选中路径不为空，显示选中图片
-    {
-        QPixmap pixmap;
-        bool ret = pixmap.load(getPressImagePath());
-        if (!ret)
-        {
-            qDebug() << getPressImagePath() << "加载图片失败!";
-        }
+void MyPushButton::mousePressEvent(QMouseEvent* event) {
+  if (!pressed_image_path_.isEmpty()) {
+    SetImage(pressed_image_path_);
+  }
+  QPushButton::mousePressEvent(event);
+}
 
-        this->setFixedSize(pixmap.width(), pixmap.height());
-        this->setStyleSheet("QPushButton{border:0px;}");
-        this->setIcon(pixmap);
-        this->setIconSize(QSize(pixmap.width(), pixmap.height()));
-    }
-    //交给父类执行按下事件
-    return QPushButton::mousePressEvent(e);
+void MyPushButton::mouseReleaseEvent(QMouseEvent* event) {
+  if (!pressed_image_path_.isEmpty()) {
+    SetImage(normal_image_path_);
+  }
+  QPushButton::mouseReleaseEvent(event);
 }
-void MyPushButton::mouseReleaseEvent(QMouseEvent *e)
-{
-    if (getNormalImagePath() != "") //选中路径不为空，显示选中图片
-    {
-        QPixmap pixmap;
-        bool ret = pixmap.load(getNormalImagePath());
-        if (!ret)
-        {
-            qDebug() << getNormalImagePath() << "加载图片失败!";
-        }
-        this->setFixedSize(pixmap.width(), pixmap.height());
-        this->setStyleSheet("QPushButton{border:0px;}");
-        this->setIcon(pixmap);
-        this->setIconSize(QSize(pixmap.width(), pixmap.height()));
-    }
-    return QPushButton::mouseReleaseEvent(e);
+
+void MyPushButton::SetImage(const QString& image_path) {
+  QPixmap pixmap;
+  if (!pixmap.load(image_path)) {
+    qWarning() << "MyPushButton: failed to load image" << image_path;
+    return;
+  }
+  setFixedSize(pixmap.size());
+  setIcon(QIcon(pixmap));
+  setIconSize(pixmap.size());
 }
+
+}  // namespace coinfilp

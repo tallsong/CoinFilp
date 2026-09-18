@@ -1,103 +1,71 @@
 #include "mycoin.h"
+
 #include <QDebug>
-#include <QTimer>
-#include <QPixmap>
 #include <QIcon>
 #include <QMouseEvent>
-//MyCoin::MyCoin(QWidget *parent) : QWidget(parent)
-//{
+#include <QPixmap>
+#include <QString>
+#include <QTimer>
 
-//}
+namespace coinfilp {
+namespace {
 
-MyCoin::MyCoin(QString imagePath)
-{
-    QPixmap pix;
-    if (!pix.load(imagePath))
-    {
-        qDebug() << "wrong path:" << imagePath;
-        return;
-    }
-    else
-    {
-        this->setFixedSize(pix.width(), pix.height());
-        this->setStyleSheet("QPushButton{border:0px;}");
-        this->setIcon(pix);
-        this->setIconSize(QSize{pix.width(), pix.height()});
+// Frames are named Coin0001.png (fully face-up) through Coin0008.png (fully
+// face-down).
+constexpr int kFirstFrame = 1;
+constexpr int kLastFrame = 8;
+constexpr int kFrameIntervalMs = 30;
 
-        m_timer1 = new QTimer(this);
-        m_timer2 = new QTimer(this);
-
-        connect(m_timer1, &QTimer::timeout, [=]() {
-            QPixmap pix;
-            QString imagePath = QString(":/img/Coin000%1.png").arg(this->m_min++);
-            if (!pix.load(imagePath))
-            {
-                qDebug() << "wrong path:" << imagePath;
-                return;
-            }
-            else
-            {
-                this->setFixedSize(pix.width(), pix.height());
-                this->setStyleSheet("QPushButton{border:0px;}");
-                this->setIcon(pix);
-                this->setIconSize(QSize{pix.width(), pix.height()});
-            };
-            if (this->m_min > this->m_max)
-            {
-                this->m_min = 1;
-                m_timer1->stop();
-                this->m_isAnimation = false;
-            }
-        });
-        connect(m_timer2, &QTimer::timeout, [=]() {
-            QPixmap pix;
-            QString imagePath = QString(":/img/Coin000%1.png").arg(this->m_max--);
-            if (!pix.load(imagePath))
-            {
-                qDebug() << "wrong path:" << imagePath;
-                return;
-            }
-            else
-            {
-                this->setFixedSize(pix.width(), pix.height());
-                this->setStyleSheet("QPushButton{border:0px;}");
-                this->setIcon(pix);
-                this->setIconSize(QSize{pix.width(), pix.height()});
-            };
-            if (this->m_min > this->m_max)
-            {
-                this->m_max = 8;
-                m_timer2->stop();
-                this->m_isAnimation = false;
-            }
-        });
-    }
+QString FramePath(int frame) {
+  return QString(":/img/Coin%1.png").arg(frame, 4, 10, QLatin1Char('0'));
 }
 
-void MyCoin::changeFlag()
-{
-    if (this->m_flag)
-    {
-        this->m_isAnimation = true;
-        this->m_timer1->start(30);
+}  // namespace
 
-        this->m_flag = false;
-    }
-    else
-    {
-        this->m_isAnimation = true;
-        this->m_timer2->start(30);
-        this->m_flag = true;
-    }
+MyCoin::MyCoin(bool face_up, QWidget* parent)
+    : QPushButton(parent),
+      face_up_(face_up),
+      animation_timer_(new QTimer(this)) {
+  setStyleSheet("QPushButton{border:0px;}");
+  ShowFrame(face_up_ ? kFirstFrame : kLastFrame);
+  animation_timer_->setInterval(kFrameIntervalMs);
+  connect(animation_timer_, &QTimer::timeout, this, &MyCoin::AdvanceAnimation);
 }
-void MyCoin::mousePressEvent(QMouseEvent *e)
-{
-    if (this->m_isAnimation || this->m_isWin)
-    {
-        return;
-    }
-    else
-    {
-        QPushButton::mousePressEvent(e);
-    }
+
+void MyCoin::Flip() {
+  face_up_ = !face_up_;
+  // Flipping face-down runs through the frames forwards; flipping face-up
+  // runs through them backwards.
+  frame_step_ = face_up_ ? -1 : 1;
+  frame_ = face_up_ ? kLastFrame : kFirstFrame;
+  animation_timer_->start();
 }
+
+void MyCoin::mousePressEvent(QMouseEvent* event) {
+  if (locked_ || animation_timer_->isActive()) {
+    return;
+  }
+  QPushButton::mousePressEvent(event);
+}
+
+void MyCoin::ShowFrame(int frame) {
+  const QString path = FramePath(frame);
+  QPixmap pixmap;
+  if (!pixmap.load(path)) {
+    qWarning() << "MyCoin: failed to load frame" << path;
+    return;
+  }
+  setFixedSize(pixmap.size());
+  setIcon(QIcon(pixmap));
+  setIconSize(pixmap.size());
+}
+
+void MyCoin::AdvanceAnimation() {
+  ShowFrame(frame_);
+  frame_ += frame_step_;
+  if (frame_ < kFirstFrame || frame_ > kLastFrame) {
+    animation_timer_->stop();
+  }
+}
+
+}  // namespace coinfilp

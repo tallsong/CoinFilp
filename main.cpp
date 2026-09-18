@@ -1,11 +1,10 @@
-#include "mainscene.h"
-
 #include <QApplication>
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    MainScene w;
-    w.show();
-    return a.exec();
+#include "mainscene.h"
+
+int main(int argc, char* argv[]) {
+  QApplication app(argc, argv);
+  coinfilp::MainScene main_scene;
+  main_scene.show();
+  return app.exec();
 }

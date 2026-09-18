@@ -1,6 +1,11 @@
 QT       += core gui widgets multimedia
 
-CONFIG += c++17
+CONFIG += c++20
+
+# Xcode 26+/27 clang on Apple Silicon: Qt's qyieldcpu.h calls __yield(), which
+# needs <arm_acle.h> to be declared first, otherwise the build fails with
+# "implicitly declaring library function '__yield'". See qt_yield_fix.h.
+macx: QMAKE_CXXFLAGS += -include $$PWD/qt_yield_fix.h
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -16,6 +21,8 @@ SOURCES += \
     dataconfig.cpp
 
 HEADERS += \
+    constants.h \
+    qt_yield_fix.h \
     chooselevelscene.h \
     mainscene.h \
     mypushbutton.h \
