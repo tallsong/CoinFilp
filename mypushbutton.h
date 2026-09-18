@@ -1,34 +1,41 @@
-#ifndef MYPUSHBUTTON_H
-#define MYPUSHBUTTON_H
+// An image-based push button with an optional pressed image and a bounce
+// animation.
+#ifndef COINFILP_MYPUSHBUTTON_H_
+#define COINFILP_MYPUSHBUTTON_H_
 
 #include <QPushButton>
 #include <QString>
 
 class QMouseEvent;
 
-class MyPushButton : public QPushButton
-{
-    Q_OBJECT
-public:
-    //explicit MyPushButton(QWidget *parent = nullptr);
-    MyPushButton(QString normalImagePath, QString pressImagePath = "");
-    QString getNormalImagePath()
-    {
-        return this->m_normalImagePath;
-    }
-    QString getPressImagePath()
-    {
-        return this->m_pressImagePath;
-    }
-    void moveUp();
-    void moveDown();
-    void mousePressEvent(QMouseEvent *e);
-    void mouseReleaseEvent(QMouseEvent *e);
+namespace coinfilp {
 
-private:
-    QString m_normalImagePath;
-    QString m_pressImagePath;
-signals:
+class MyPushButton : public QPushButton {
+  Q_OBJECT
+
+ public:
+  // Shows `normal_image_path` and sizes the button to match it. If
+  // `pressed_image_path` is not empty, that image is shown while the mouse
+  // button is held down.
+  explicit MyPushButton(const QString& normal_image_path,
+                        const QString& pressed_image_path = QString(),
+                        QWidget* parent = nullptr);
+
+  // Dips the button down and springs it back to its original position.
+  void Bounce();
+
+ protected:
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseReleaseEvent(QMouseEvent* event) override;
+
+ private:
+  // Loads `image_path` as the button icon and resizes the button to fit.
+  void SetImage(const QString& image_path);
+
+  QString normal_image_path_;
+  QString pressed_image_path_;
 };
 
-#endif // MYPUSHBUTTON_H
+}  // namespace coinfilp
+
+#endif  // COINFILP_MYPUSHBUTTON_H_

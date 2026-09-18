@@ -1,28 +1,59 @@
-#ifndef PLAYSCENE_H
-#define PLAYSCENE_H
-#include "mycoin.h"
+// The game board for one level.
+#ifndef COINFILP_PLAYSCENE_H_
+#define COINFILP_PLAYSCENE_H_
+
 #include <QMainWindow>
+#include <array>
 
-class PlayScene : public QMainWindow
-{
-    Q_OBJECT
-public:
-    //explicit PlayScene(QWidget *parent = 0);
-    PlayScene(int playLevel);
-    void paintEvent(QPaintEvent *);
-    int getPlayLevel()
-    {
-        return m_playLevel;
-    }
-    int m_array[4][4];
-    MyCoin *m_coinList[4][4];
-    bool m_isWin{true};
+#include "dataconfig.h"
 
-private:
-    int m_playLevel;
-signals:
-    void chooseSecneBack();
-public slots:
+class QLabel;
+class QPaintEvent;
+class QPixmap;
+class QSoundEffect;
+
+namespace coinfilp {
+
+class MyCoin;
+
+class PlayScene : public QMainWindow {
+  Q_OBJECT
+
+ public:
+  explicit PlayScene(int level, QWidget* parent = nullptr);
+
+  int level() const { return level_; }
+
+ signals:
+  // Emitted when the user presses the back button.
+  void BackRequested();
+
+ protected:
+  void paintEvent(QPaintEvent* event) override;
+
+ private:
+  void CreateMenu();
+  void CreateBackButton();
+  void CreateLevelLabel();
+  void CreateWinBanner();
+  void CreateBoard();
+
+  // Handles a click on the coin at (`column`, `row`): flips it and its four
+  // neighbours, then checks whether the level is solved.
+  void OnCoinClicked(int column, int row);
+  bool IsSolved() const;
+  void ShowWin();
+
+  int level_;
+  std::array<std::array<MyCoin*, kBoardSize>, kBoardSize> coins_{};
+  QLabel* win_banner_ = nullptr;
+  QSoundEffect* back_sound_ = nullptr;
+  QSoundEffect* flip_sound_ = nullptr;
+  QSoundEffect* win_sound_ = nullptr;
+  QPixmap background_;
+  QPixmap title_;
 };
 
-#endif // PLAYSCENE_H
+}  // namespace coinfilp
+
+#endif  // COINFILP_PLAYSCENE_H_

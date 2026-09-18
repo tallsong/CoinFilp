@@ -21,6 +21,7 @@ Every button press, coin flip and win is accompanied by a sound effect, and coin
 
 - Qt 6 (tested with 6.4) with the `core`, `gui`, `widgets` and `multimedia` modules
 - A C++17-capable compiler
+- Code follows the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html); a `.clang-format` is included.
 - `qmake6` (or Qt Creator)
 
 Sound effects are played through `QSoundEffect`, so the Qt Multimedia module and one of its platform audio backends must be installed.
@@ -48,15 +49,18 @@ All images and sounds are compiled into the binary through `img.qrc`, so the exe
 | `mainscene.h/.cpp/.ui` | Main menu window with the start button and background painting. |
 | `chooselevelscene.h/.cpp` | Level picker; creates a `PlayScene` for the chosen level and handles returning from it. |
 | `playscene.h/.cpp` | The game board: lays out the coins, applies the flip rule to neighbours, checks for the win condition and plays the win animation. |
-| `mycoin.h/.cpp` | A `QPushButton` subclass representing one coin. Runs the eight-frame flip animation with two `QTimer`s and ignores clicks while animating or after a win. |
+| `mycoin.h/.cpp` | A `QPushButton` subclass representing one coin. Runs the eight-frame flip animation with a single `QTimer` and ignores clicks while animating or once the board is locked after a win. |
 | `mypushbutton.h/.cpp` | Image-based `QPushButton` with an optional pressed image and a small bounce animation used by the start button. |
-| `dataconfig.h/.cpp` | Holds the 20 level layouts as 4×4 grids (`1` = face-up, `0` = face-down) in a `QMap<int, QVector<QVector<int>>>` keyed by level number. |
+| `dataconfig.h/.cpp` | Holds the 20 level layouts as a `constexpr` table of 4×4 `bool` boards (`1` = face-up, `0` = face-down), looked up with `GetLevelBoard(level)`. |
+| `constants.h` | Scene size, scene-switch delay and resource paths shared by more than one scene. |
+| `qt_yield_fix.h` | Build workaround for Qt 6.10 with Xcode 26+/27 on Apple Silicon (see comment inside). |
+| `.clang-format` | Google C++ style; run `clang-format -i *.cpp *.h` after editing. |
 | `img.qrc`, `img/` | Qt resource file and the PNG/WAV assets it bundles. |
 | `docs/` | Miscellaneous Qt notes (currently an example of re-implementing focus events on a `QLineEdit`). |
 
 ## Adding or editing levels
 
-Level data lives in `dataconfig.cpp`. Each level is a `4x4` integer array that is copied into `mData` under its level number. To change a level, edit the corresponding array. To add a level beyond 20, add a new array and `mData.insert(n, v)` call, then increase the loop bound in `chooselevelscene.cpp` so a button is created for it.
+Level data lives in `dataconfig.cpp` as the `kLevels` table; entry `n - 1` is level `n`, and each inner array is one column of the board from top to bottom. To change a level, edit its entry. To add a level beyond 20, append an entry and bump `kLevelCount` in `dataconfig.h`; the level picker creates one button per level automatically.
 
 ## Acknowledgements
 
